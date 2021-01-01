@@ -1,0 +1,94 @@
+import json 
+import time
+def read(k):
+    if k not in d:
+        print("key is not") 
+    else : 
+        b=d[k]
+        if b[1]!=0:  
+            if time.time()<b[1]:
+                stri = str(k) + ":"+ str(b[0]) 
+                return stri
+            else:
+                print("time limit of",key,"has expired") 
+        else:
+            stri=str(key)+":"+str(b[0])
+            return stri
+
+def delete(key,value):
+    if key not in d:
+        print("Please enter a valid key") 
+    else:
+        b=d[key]
+        if b[1]!=0:
+            if time.time()<b[1]: 
+                del d[key]
+                print("key is successfully deleted")
+            else:
+                print("time limit of",key,"has expired") 
+        else:
+            del d[key]
+            print("key is successfully deleted")
+def create(key,value,timeout=0):
+    if key in d:
+        print("error: this key already exists") 
+    else:
+        if(key.isalpha()):
+            if len(d)<(1024*1020*1024) and value<=(16*1024*1024): 
+                if timeout==0:
+                    l=[value,timeout]
+                else:
+                    l=[value,time.time()+timeout]
+                if len(key)<=32:
+                    d[key]=l
+                json_object = json.dumps(d, indent = 4) 
+                with open("main.json", "w") as outfile: 
+                    outfile.write(json_object) 
+            else:
+                print("Memory limit exceeded")
+        else:
+            print("key_name must contain only alphabets")
+
+process = "yes"
+while (process == "yes") :
+  temp = {}
+  x = input("Do u want to go to main database and do operation in it ") 
+  if x=="yes": 
+    with open('main.json','r') as masteropen : 
+         data_load = json.load(masteropen)
+    temp = data_load
+    print(temp)
+  d = temp
+  x=int(input("enter the operation")) 
+  if x==1:
+    key=input() 
+    value=int(input()) 
+    create(key,value)
+  if x==2:
+    key=input()
+    value=int(input()) 
+    delete(key,value)
+  if x==3:
+    key=input()
+    read(str(key)) 
+  if x==4: 
+    print(d)
+  temp=d
+  with open('temporary.json','w') as fp:
+    json.dump(temp,fp)
+  x=input("is this first operation") 
+  if x=="yes":
+    with open('main.json','w') as fp: 
+        json.dump(temp,fp)
+  x=input("Do u want to Enter the data in main.json")
+  if x=="yes" :
+    data ={} 
+    import json 
+    with open('main.json' , 'r') as fp:
+        data = json.load(fp)
+    main = dict(data)
+    main.update(temp)
+    with open('main.json','w') as fp:
+        json.dump(main,fp)
+    process = input("DO u want to continue the process")
+print("all done")
